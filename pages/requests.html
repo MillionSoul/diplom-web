@@ -1,0 +1,154 @@
+<div class="page-header">
+
+    <h1><i class="fas fa-clipboard-list"></i> Заявки на операции</h1>
+
+    <p>Подайте заявку — стоимость рассчитается автоматически по тарифам элеватора</p>
+
+</div>
+
+<div class="container mx-auto px-4 pb-20">
+
+    <div class="grid lg:grid-cols-5 gap-6 mb-8">
+
+        <div class="card-panel lg:col-span-3">
+
+            <h2 class="text-xl font-bold mb-4">Новая заявка</h2>
+
+            <form id="requestForm" onsubmit="submitRequest(event)">
+
+                <div class="grid md:grid-cols-2 gap-4">
+
+                    <div class="form-group md:col-span-2">
+                        <label class="block mb-2">Услуги <span class="text-gray-500 font-normal text-sm">(можно выбрать несколько)</span></label>
+                        <div class="service-options">
+                            <label class="service-option service-option--cleaning">
+                                <input type="checkbox" id="svcCleaning" onchange="updateRequestEstimate()">
+                                <span class="service-option__card">
+                                    <i class="fas fa-filter"></i>
+                                    <span class="service-option__title">Очистка</span>
+                                    <span class="service-option__hint">Зерноочистка</span>
+                                </span>
+                            </label>
+                            <label class="service-option service-option--drying">
+                                <input type="checkbox" id="svcDrying" onchange="updateRequestEstimate()">
+                                <span class="service-option__card">
+                                    <i class="fas fa-wind"></i>
+                                    <span class="service-option__title">Сушка</span>
+                                    <span class="service-option__hint">Снижение влажности</span>
+                                </span>
+                            </label>
+                            <label class="service-option service-option--storage">
+                                <input type="checkbox" id="svcStorage" onchange="updateRequestEstimate()">
+                                <span class="service-option__card">
+                                    <i class="fas fa-warehouse"></i>
+                                    <span class="service-option__title">Хранение</span>
+                                    <span class="service-option__hint">Размещение в силосе</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Культура</label>
+
+                        <select id="requestGrain" class="input-field" required onchange="updateRequestEstimate()"></select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Объём, т</label>
+
+                        <input type="number" id="requestVolume" min="1" step="0.1" class="input-field" required oninput="updateRequestEstimate()">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Влажность, %</label>
+
+                        <input type="number" id="requestMoisture" min="10" max="35" step="0.1" class="input-field" placeholder="14" oninput="updateRequestEstimate()">
+
+                    </div>
+
+                    <div class="form-group hidden" id="requestStorageMonthsWrap">
+
+                        <label>Срок хранения, мес.</label>
+
+                        <input type="number" id="requestStorageMonths" min="1" max="24" value="3" class="input-field" oninput="updateRequestEstimate()">
+
+                    </div>
+
+                    <div class="form-group md:col-span-2">
+
+                        <label>Комментарий для диспетчера</label>
+
+                        <textarea id="requestDetails" rows="2" class="input-field" placeholder="Пожелания по срокам, качеству, отгрузке…"></textarea>
+
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-primary mt-4"><i class="fas fa-paper-plane mr-2"></i>Отправить заявку</button>
+
+            </form>
+
+        </div>
+
+        <div class="card-panel lg:col-span-2" id="requestEstimatePanel">
+
+            <h3 class="font-bold mb-2"><i class="fas fa-calculator text-amber-600"></i> Предварительный расчёт</h3>
+
+            <p class="text-xs text-gray-500 mb-3">Оценка по тарифам. Итоговая сумма уточняется после приёмки партии.</p>
+
+            <p class="price-value text-2xl mb-2" id="requestEstimatePrice">—</p>
+
+            <ul id="requestEstimateLines" class="text-sm text-gray-600 list-disc pl-5 space-y-1 mb-2"></ul>
+
+            <div id="requestEstimateWarn" class="hidden"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card-panel">
+
+        <div class="table-toolbar">
+
+            <h2 class="font-bold">Мои заявки</h2>
+
+            <div class="export-btns">
+
+                <button onclick="exportRequests('txt','user')" class="btn-export">TXT</button>
+
+                <button onclick="exportRequests('xlsx','user')" class="btn-export btn-export-green">Excel</button>
+
+                <button onclick="exportRequests('pdf','user')" class="btn-export btn-export-red">PDF</button>
+
+            </div>
+
+        </div>
+
+        <div class="table-wrap">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr><th>ID</th><th>Дата</th><th>Услуги</th><th>Культура</th><th>т</th><th>Статус</th><th></th></tr>
+
+                </thead>
+
+                <tbody id="requestsTableBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+

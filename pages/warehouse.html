@@ -1,0 +1,38 @@
+<div class="page-header page-header-monitoring">
+    <h1><i class="fas fa-boxes-stacked"></i> Учёт партий зерна</h1>
+    <p>Реестр партий на этапах первичной обработки — данные BalashovGrainBase</p>
+</div>
+<div class="container mx-auto px-4 pb-20">
+    <div class="kpi-grid mb-8">
+        <div class="kpi-card kpi-industrial"><span>Вместимость</span><strong id="totalCapacityLabel">—</strong></div>
+        <div class="kpi-card kpi-green"><span>На элеваторе</span><strong id="totalOccupied">0 т</strong></div>
+        <div class="kpi-card kpi-blue"><span>Свободно</span><strong id="totalFree">—</strong></div>
+        <div class="kpi-card kpi-purple"><span>Партий</span><strong id="totalBatches">0</strong></div>
+    </div>
+
+    <h2 class="section-title mb-4">Загрузка силосов</h2>
+    <div id="facilitiesGrid" class="facilities-grid mb-10"></div>
+
+    <div class="table-toolbar mb-4">
+        <button onclick="openAddBatchModal()" class="btn-primary"><i class="fas fa-plus mr-2"></i>Приемка (новая партия)</button>
+        <input type="text" id="searchBatch" placeholder="Поиск партии..." class="input-field input-search" onkeyup="filterBatches()">
+        <div class="export-btns">
+            <button onclick="generateReport('txt')" class="btn-export">TXT</button>
+            <button onclick="generateReport('xlsx')" class="btn-export btn-export-green">Excel</button>
+            <button onclick="generateReport('pdf')" class="btn-export btn-export-red">PDF</button>
+        </div>
+    </div>
+    <div class="card-panel">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Партия</th><th>Дата</th><th>Культура</th><th>т</th>
+                        <th>Влажн.</th><th>Очистка</th><th>Сушка</th><th>Силос</th><th>Статус</th><th></th>
+                    </tr>
+                </thead>
+                <tbody id="batchesTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>

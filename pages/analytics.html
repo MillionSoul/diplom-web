@@ -1,0 +1,24 @@
+<div class="page-header page-header-monitoring">
+    <h1><i class="fas fa-chart-line"></i> Аналитика процессов</h1>
+    <p>Статистика первичной обработки и загрузки элеватора</p>
+</div>
+<div class="container mx-auto px-4 pb-20">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="card-panel chart-panel-occupancy">
+            <h3 class="font-bold mb-2">Загрузка элеватора</h3>
+            <div class="chart-occupancy-wrap"><canvas id="occupancyChart"></canvas></div>
+            <div id="occupancyChartLegend" class="occupancy-legend"></div>
+        </div>
+        <div class="card-panel"><h3 class="font-bold mb-3">Масса по культурам</h3><canvas id="grainDistributionChart" height="200"></canvas></div>
+        <div class="card-panel"><h3 class="font-bold mb-3">Заявки на операции</h3><canvas id="requestsChart" height="200"></canvas></div>
+    </div>
+    <div class="card-panel">
+        <h3 class="font-bold mb-4">Сводка за период</h3>
+        <div class="grid md:grid-cols-4 gap-4">
+            <div class="mini-stat"><span>Принято (год)</span><strong id="statReceived">—</strong></div>
+            <div class="mini-stat mini-stat-green"><span>Отгружено</span><strong id="statShipped">—</strong></div>
+            <div class="mini-stat mini-stat-blue"><span>Очередь сушки</span><strong id="statDried">—</strong></div>
+            <div class="mini-stat mini-stat-purple"><span>Ср. влажность</span><strong id="statMoisture">—</strong></div>
+        </div>
+    </div>
+</div>

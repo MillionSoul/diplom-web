@@ -1,0 +1,54 @@
+<div class="page-header page-header-monitoring">
+    <h1><i class="fas fa-industry"></i> Управление процессами</h1>
+    <p>Весы → лаборатория → приемка → очистка → сушка → хранение</p>
+</div>
+<div class="container mx-auto px-4 pb-20">
+    <div class="monitor-toolbar">
+        <span class="live-dot"></span> Операторский контур
+        <button type="button" onclick="refreshWorkflow()" class="btn-ghost text-sm ml-auto"><i class="fas fa-rotate"></i> Обновить</button>
+    </div>
+
+    <div class="card-panel mb-6 border-l-4 border-amber-500">
+        <h2 class="font-bold mb-2"><i class="fas fa-inbox text-amber-600"></i> Заявки (ожидают принятия)</h2>
+        <p class="text-sm text-gray-500 mb-3">Принять — партия на <strong>Весы</strong>. Отклонить — заявка уходит в статус «Отклонено».</p>
+        <div id="pendingSearchMount"></div>
+        <div class="table-wrap table-compact">
+            <table class="data-table">
+                <thead>
+                    <tr><th>ID</th><th>Дата</th><th>Предприятие</th><th>Заказ</th><th>Культура</th><th>т</th><th>Влажн.</th><th></th></tr>
+                </thead>
+                <tbody id="pendingRequestsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="workflow-tabs" id="workflowTabs">
+        <button type="button" class="workflow-tab workflow-tab-active" data-stage="scales" onclick="selectWorkflowStage('scales')">Весы <span id="tabCount_scales" class="tab-count">0</span></button>
+        <button type="button" class="workflow-tab" data-stage="laboratory" onclick="selectWorkflowStage('laboratory')">Лаборатория <span id="tabCount_laboratory" class="tab-count">0</span></button>
+        <button type="button" class="workflow-tab" data-stage="reception" onclick="selectWorkflowStage('reception')">Приемка <span id="tabCount_reception" class="tab-count">0</span></button>
+        <button type="button" class="workflow-tab" data-stage="cleaning" onclick="selectWorkflowStage('cleaning')">Очистка <span id="tabCount_cleaning" class="tab-count">0</span></button>
+        <button type="button" class="workflow-tab" data-stage="drying" onclick="selectWorkflowStage('drying')">Сушка <span id="tabCount_drying" class="tab-count">0</span></button>
+        <button type="button" class="workflow-tab" data-stage="storage" onclick="selectWorkflowStage('storage')">Хранение <span id="tabCount_storage" class="tab-count">0</span></button>
+        <button type="button" class="workflow-tab" data-stage="completed" onclick="selectWorkflowStage('completed')">Завершено <span id="tabCount_completed" class="tab-count">0</span></button>
+    </div>
+
+    <div class="card-panel">
+        <div class="table-toolbar mb-4 flex flex-col gap-2">
+            <div>
+                <h2 class="font-bold" id="stagePanelTitle">Этап: Весы</h2>
+                <p class="text-sm text-gray-500" id="stagePanelHint"></p>
+            </div>
+            <div id="stageSearchMount" class="w-full max-w-md"></div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Партия</th><th>Предприятие</th><th>Заказ</th><th>Культура</th><th>т</th><th>Влажн.</th><th>Силос</th><th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="stageBatchesBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>

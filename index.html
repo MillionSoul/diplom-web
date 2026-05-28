@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Мониторинг и управление процессами первичной обработки зерна — АО Балашовская хлебная база">
+    <title>Мониторинг обработки зерна — Балашовская ХБ</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+</head>
+<body>
+    <div id="apiStatusBar" class="api-status-bar hidden" role="status"></div>
+    <header class="site-nav">
+        <div class="nav-inner">
+            <a href="#home" onclick="showPage('home'); return false;" class="brand">
+                <i class="fas fa-wheat-awn"></i>
+                <span><strong>БАЛАШОВСКАЯ ХБ</strong><small>Мониторинг обработки зерна</small></span>
+            </a>
+
+            <nav id="navMain" class="nav-main guest-only" aria-label="Меню">
+                <a href="#home" data-nav="home" onclick="showPage('home'); return false;">Главная</a>
+                <a href="#contacts" data-nav="contacts" onclick="showPage('contacts'); return false;">Контакты</a>
+            </nav>
+
+            <div class="nav-right">
+                <div id="userMenuWrap" class="user-menu-wrap">
+                    <button type="button" id="userMenuBtn" class="user-menu-btn" aria-haspopup="true">
+                        <i class="fas fa-gauge-high"></i>
+                        <span id="userMenuLabel">Меню</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="userDropdown" class="user-dropdown hidden">
+                        <div class="dropdown-section">Сайт</div>
+                        <a href="#home" onclick="showPage('home'); closeUserMenu(); return false;"><i class="fas fa-house"></i> Главная</a>
+                        <a href="#contacts" onclick="showPage('contacts'); closeUserMenu(); return false;"><i class="fas fa-address-book"></i> Контакты</a>
+                        <hr>
+                        <div class="dropdown-section">Личный кабинет</div>
+                        <a href="#requests" onclick="showPage('requests'); closeUserMenu(); return false;"><i class="fas fa-clipboard-list"></i> Заявки и расчёт</a>
+                        <a href="#messages" onclick="showPage('messages'); closeUserMenu(); return false;"><i class="fas fa-comments"></i> Сообщения <span id="navUnreadBadge" class="nav-badge hidden">0</span></a>
+                        <a href="#profile" onclick="showPage('profile'); closeUserMenu(); return false;"><i class="fas fa-id-card"></i> Профиль</a>
+                        <div class="dropdown-section staff-only">Мониторинг</div>
+                        <a href="#monitoring" class="staff-only" onclick="showPage('monitoring'); closeUserMenu(); return false;"><i class="fas fa-gauge-high"></i> Процессы (live)</a>
+                        <a href="#warehouse" class="staff-only" onclick="showPage('warehouse'); closeUserMenu(); return false;"><i class="fas fa-boxes-stacked"></i> Учёт партий</a>
+                        <a href="#analytics" class="staff-only" onclick="showPage('analytics'); closeUserMenu(); return false;"><i class="fas fa-chart-line"></i> Аналитика</a>
+                        <a href="#messages-support" class="staff-only" onclick="openSupportDesk(); closeUserMenu(); return false;"><i class="fas fa-headset"></i> Техподдержка <span id="navSupportBadge" class="nav-badge hidden">0</span></a>
+                        <div class="dropdown-section staff-only">Справка</div>
+                        <a href="#processes" class="staff-only" onclick="showPage('processes'); closeUserMenu(); return false;"><i class="fas fa-diagram-project"></i> Технологические процессы</a>
+                        <a href="#about" class="staff-only" onclick="showPage('about'); closeUserMenu(); return false;"><i class="fas fa-circle-info"></i> О системе</a>
+                        <div class="dropdown-section admin-only">Управление</div>
+                        <a href="#admin" class="admin-only" onclick="showPage('admin'); closeUserMenu(); return false;"><i class="fas fa-sliders"></i> Центр управления</a>
+                        <hr>
+                        <button type="button" onclick="logout()" class="dropdown-logout"><i class="fas fa-right-from-bracket"></i> Выход</button>
+                    </div>
+                </div>
+                <button onclick="showPage('login')" id="loginNavBtn" class="btn-primary-sm guest-only">Вход</button>
+                <button type="button" class="nav-burger guest-only" id="menuBtn" aria-label="Меню"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu">
+            <a href="#home" onclick="showPage('home'); closeMobileMenu(); return false;">Главная</a>
+            <a href="#contacts" onclick="showPage('contacts'); closeMobileMenu(); return false;">Контакты</a>
+            <a href="#login" onclick="showPage('login'); closeMobileMenu(); return false;" class="mobile-login">Вход</a>
+        </div>
+    </header>
+
+    <div id="page-root"></div>
+
+    <div id="addBatchModal" class="modal">
+        <div class="modal-dialog">
+            <h3 class="text-xl font-bold mb-4">Регистрация партии (приемка)</h3>
+            <form id="addBatchForm" onsubmit="saveBatch(event)">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group"><label>Культура</label><select id="batchGrain" required class="input-field"></select></div>
+                    <div class="form-group"><label>Силос</label><select id="batchSilo" required class="input-field"></select></div>
+                    <div class="form-group"><label>Масса нетто, т</label><input type="number" id="batchVolume" required min="1" class="input-field"></div>
+                    <div class="form-group"><label>Влажность, %</label><input type="number" id="batchMoisture" required min="10" max="35" step="0.1" class="input-field"></div>
+                    <div class="form-group"><label>Клейковина, %</label><input type="number" id="batchGluten" min="0" max="40" step="0.1" class="input-field"></div>
+                    <div class="form-group flex items-end gap-4 md:col-span-2">
+                        <label class="flex items-center gap-2"><input type="checkbox" id="batchNeedsCleaning" checked> Требуется очистка</label>
+                        <label class="flex items-center gap-2"><input type="checkbox" id="batchNeedsDrying"> Требуется сушка</label>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" class="btn-primary flex-1">Зарегистрировать</button>
+                    <button type="button" onclick="closeModal('addBatchModal')" class="btn-ghost flex-1">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="scalesModal" class="modal">
+        <div class="modal-dialog">
+            <h3 class="text-xl font-bold mb-1"><i class="fas fa-weight-scale"></i> Этап: Весы</h3>
+            <p class="text-sm text-gray-500 mb-2"><span id="scalesBatchNumber"></span> · <span id="scalesOrganization"></span></p>
+            <p class="text-sm mb-3" id="scalesOrderServices"></p>
+            <input type="hidden" id="scalesBatchId">
+            <form onsubmit="submitScalesToLab(event)">
+                <p class="text-sm mb-3">Заявлено: <strong id="scalesDeclaredWeight"></strong> · отклонение: <span id="scalesDiff" class="text-amber-700 font-semibold"></span></p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group"><label>Фактический вес нетто, т</label><input id="scalesWeightNet" type="number" step="0.01" class="input-field" required></div>
+                    <div class="form-group"><label>Фактический вес брутто, т</label><input id="scalesWeightGross" type="number" step="0.01" class="input-field" required></div>
+                    <div class="form-group md:col-span-2"><label>Заметки</label><textarea id="scalesNotes" rows="2" class="input-field"></textarea></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">При расхождении скорректируйте фактический вес и отправьте в лабораторию.</p>
+                <div class="flex gap-3 mt-4">
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-flask"></i> В лабораторию</button>
+                    <button type="button" onclick="closeModal('scalesModal')" class="btn-ghost flex-1">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="laboratoryModal" class="modal">
+        <div class="modal-dialog modal-dialog-lg">
+            <h3 class="text-xl font-bold mb-1"><i class="fas fa-flask"></i> Этап: Лаборатория</h3>
+            <p class="text-sm text-gray-500 mb-2"><span id="labBatchNumber"></span> · <span id="labOrganization"></span></p>
+            <p class="text-sm mb-3" id="labOrderServices"></p>
+            <input type="hidden" id="labBatchId">
+            <form onsubmit="submitLaboratory(event)">
+                <div class="grid md:grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg text-sm">
+                    <div>Заявленная культура: <strong id="labDeclaredGrain"></strong></div>
+                    <div>Заявленная влажность: <strong id="labDeclaredMoisture"></strong></div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group"><label>Фактическая культура</label><select id="labGrainType" class="input-field" required></select></div>
+                    <div class="form-group"><label>Фактическая влажность, %</label><input id="labMoisture" type="number" step="0.1" class="input-field" required></div>
+                    <div class="form-group md:col-span-2 lab-parasite-box">
+                        <p class="text-sm text-gray-600 mb-2">Если в пробе есть вредители — отмените заказ отдельной кнопкой (партия не пойдёт на приёмку).</p>
+                        <label class="flex items-center gap-2 text-red-800 font-semibold">
+                            <input type="checkbox" id="labParasite" onchange="toggleLabParasiteCancel()"> В пробе обнаружены вредители
+                        </label>
+                    </div>
+                    <div class="form-group md:col-span-2"><label>Заметки лаборатории</label><textarea id="labNotes" rows="2" class="input-field"></textarea></div>
+                </div>
+                <div class="flex flex-wrap gap-3 mt-4">
+                    <button type="submit" class="btn-primary flex-1 min-w-[140px]"><i class="fas fa-check"></i> На приёмку</button>
+                    <button type="button" id="labCancelParasiteBtn" onclick="cancelOrderParasites()" class="btn-export btn-export-red flex-1 min-w-[140px] hidden">Отменить заказ</button>
+                    <button type="button" onclick="closeModal('laboratoryModal')" class="btn-ghost flex-1 min-w-[100px]">Закрыть</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="workflowBatchModal" class="modal">
+        <div class="modal-dialog modal-dialog-lg">
+            <h3 class="text-xl font-bold mb-1">Редактирование партии</h3>
+            <p class="text-sm text-gray-500 mb-4"><span id="wfBatchNumber"></span> · этап: <strong id="wfStageLabel"></strong> · предприятие: <span id="wfClient"></span></p>
+            <input type="hidden" id="wfBatchId">
+            <p class="text-sm mb-3" id="wfOrderServices"></p>
+            <form id="workflowBatchForm" onsubmit="saveWorkflowBatch(event)">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group"><label>Масса нетто, т</label><input id="wfWeightNet" type="number" step="0.01" class="input-field" required></div>
+                    <div class="form-group"><label>Масса брутто, т</label><input id="wfWeightGross" type="number" step="0.01" class="input-field" required></div>
+                    <div class="form-group"><label>Влажность, %</label><input id="wfMoisture" type="number" step="0.1" class="input-field" required></div>
+                    <div class="form-group"><label>Силос</label><select id="wfFacility" class="input-field"></select></div>
+                    <div class="form-group md:col-span-2 flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2"><input type="checkbox" id="wfNeedsCleaning" onchange="toggleWfStorageMonths()"> Очистка</label>
+                        <label class="flex items-center gap-2"><input type="checkbox" id="wfNeedsDrying"> Сушка</label>
+                        <label class="flex items-center gap-2"><input type="checkbox" id="wfNeedsStorage" onchange="toggleWfStorageMonths()"> Хранение</label>
+                    </div>
+                    <div class="form-group hidden" id="wfStorageMonthsWrap">
+                        <label>Срок хранения, мес.</label>
+                        <input type="number" id="wfStorageMonths" min="1" max="24" value="3" class="input-field">
+                    </div>
+                    <div class="form-group md:col-span-2"><label>Заметки этапа</label><textarea id="wfStageNotes" rows="2" class="input-field"></textarea></div>
+                </div>
+                <div class="flex gap-3 mt-4">
+                    <button type="submit" class="btn-primary flex-1">Сохранить</button>
+                    <button type="button" onclick="closeModal('workflowBatchModal')" class="btn-ghost flex-1">Закрыть</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editUserModal" class="modal">
+        <div class="modal-dialog modal-dialog-lg">
+            <h3 class="text-xl font-bold mb-4">Редактирование пользователя</h3>
+            <form id="editUserForm" onsubmit="saveUserEdit(event)">
+                <input type="hidden" id="editUserId">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group"><label>ФИО</label><input id="editUserFullName" required class="input-field"></div>
+                    <div class="form-group"><label>Логин</label><input id="editUserUsername" disabled class="input-field input-disabled"></div>
+                    <div class="form-group"><label>Email</label><input id="editUserEmail" type="email" class="input-field"></div>
+                    <div class="form-group"><label>Телефон</label><input id="editUserPhone" class="input-field"></div>
+                    <div class="form-group">
+                        <label>Роль</label>
+                        <select id="editUserRole" class="input-field">
+                            <option value="client">Клиент</option>
+                            <option value="operator">Оператор</option>
+                            <option value="manager">Менеджер</option>
+                            <option value="admin">Администратор</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Статус</label>
+                        <select id="editUserActive" class="input-field">
+                            <option value="true">Активен</option>
+                            <option value="false">Заблокирован</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" class="btn-primary flex-1">Сохранить</button>
+                    <button type="button" onclick="closeModal('editUserModal')" class="btn-ghost flex-1">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p><strong>АО «Балашовская хлебная база»</strong> — мониторинг первичной обработки зерна</p>
+            <p class="footer-copy">Дипломный проект · Балашовская хлебная база · MS SQL Server</p>
+        </div>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+    <div id="chatNotifyStack" class="chat-notify-stack" aria-live="polite"></div>
+    <script src="assets/js/core/deploy-config.js?v=21"></script>
+    <script type="module" src="assets/js/main.js?v=21"></script>
+</body>
+</html>

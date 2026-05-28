@@ -1,0 +1,36 @@
+<div class="page-header">
+    <h1>Профиль</h1>
+    <p>Карточка пользователя системы</p>
+</div>
+<div class="container mx-auto px-4 pb-20 max-w-5xl">
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="card-panel text-center">
+            <label for="avatarFileInput" class="cursor-pointer inline-block">
+                <img id="profileAvatar" src="https://ui-avatars.com/api/?name=User&background=d97706&color=fff&size=160" class="avatar-img" alt="Аватар">
+            </label>
+            <input id="avatarFileInput" type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+            <p class="text-xs text-gray-500 mt-2 mb-3">Нажмите на аватар для загрузки</p>
+            <h3 id="profileNameCard" class="text-xl font-bold">—</h3>
+            <p id="profileRoleCard" class="text-sm text-gray-500">—</p>
+        </div>
+        <div class="md:col-span-2 card-panel">
+            <form id="profileForm" onsubmit="updateProfile(event)">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group"><label>ФИО</label><input id="profileFullName" required class="input-field"></div>
+                    <div class="form-group"><label>Организация / предприятие</label><input id="profileOrganization" class="input-field" placeholder="Для клиентов"></div>
+                    <div class="form-group"><label>Логин</label><input id="profileUsername" disabled class="input-field input-disabled"></div>
+                    <div class="form-group"><label>Email</label><input id="profileEmail" type="email" class="input-field"></div>
+                    <div class="form-group"><label>Телефон</label><input id="profilePhone" class="input-field"></div>
+                    <div class="form-group md:col-span-2"><label>URL фото</label><input id="profileImageUrl" class="input-field"></div>
+                </div>
+                <button type="submit" class="btn-primary mt-4">Сохранить</button>
+            </form>
+            <hr class="my-6 border-gray-200">
+            <form id="passwordForm" onsubmit="changePassword(event)" class="grid md:grid-cols-3 gap-4">
+                <input id="oldPassword" type="password" required placeholder="Старый пароль" class="input-field">
+                <input id="newPassword" type="password" required placeholder="Новый пароль" class="input-field">
+                <button type="submit" class="btn-dark">Сменить пароль</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,89 @@
+<section class="hero-home hero-with-photo min-h-[520px] flex items-center text-white">
+    <div class="hero-photo-bg" role="presentation"></div>
+    <div class="hero-photo-overlay" role="presentation"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight drop-shadow-md">Мониторинг и управление первичной обработкой зерна</h1>
+        <p class="text-lg text-gray-100 max-w-2xl mb-8 drop-shadow-sm">Контроль приемки, очистки, сушки, хранения и качества партий.</p>
+        <div class="flex flex-wrap gap-3">
+            <button type="button" onclick="showPage('monitoring')" class="btn-primary staff-only"><i class="fas fa-gauge-high mr-2"></i>Мониторинг процессов</button>
+            <button type="button" onclick="showPage('requests')" class="btn-primary client-only"><i class="fas fa-clipboard-list mr-2"></i>Подать заявку</button>
+            <button type="button" onclick="showPage('processes')" class="btn-outline-light staff-only"><i class="fas fa-diagram-project mr-2"></i>Технологические процессы</button>
+            <button type="button" onclick="showPage('login')" class="btn-outline-light guest-only">Вход в систему</button>
+        </div>
+    </div>
+</section>
+
+<section class="py-12 container mx-auto px-4">
+    <h2 class="section-title mb-2">Технологический конвейер</h2>
+    <p class="text-gray-600 mb-6 max-w-2xl">Весы → лаборатория → приемка → очистка → сушка → хранение.</p>
+    <div class="process-pipeline" id="homePipeline">
+        <div class="pipeline-step" data-stage="scales">
+            <i class="fas fa-weight-scale"></i>
+            <span class="pipeline-count" id="pipeScales">—</span>
+            <strong>Весы</strong>
+            <small>Сверка массы</small>
+        </div>
+        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" data-stage="laboratory">
+            <i class="fas fa-flask"></i>
+            <span class="pipeline-count" id="pipeLaboratory">—</span>
+            <strong>Лаборатория</strong>
+            <small>Качество</small>
+        </div>
+        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" data-stage="reception">
+            <i class="fas fa-truck-ramp-box"></i>
+            <span class="pipeline-count" id="pipeReception">—</span>
+            <strong>Приемка</strong>
+            <small>Оформление</small>
+        </div>
+        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" data-stage="cleaning">
+            <i class="fas fa-filter"></i>
+            <span class="pipeline-count" id="pipeCleaning">—</span>
+            <strong>Очистка</strong>
+        </div>
+        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" data-stage="drying">
+            <i class="fas fa-wind"></i>
+            <span class="pipeline-count" id="pipeDrying">—</span>
+            <strong>Сушка</strong>
+        </div>
+        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" data-stage="storage">
+            <i class="fas fa-warehouse"></i>
+            <span class="pipeline-count" id="pipeStorage">—</span>
+            <strong>Хранение</strong>
+        </div>
+    </div>
+</section>
+
+<section class="py-8 container mx-auto px-4">
+    <h2 class="section-title mb-6">Сейчас на элеваторе</h2>
+    <div class="grid md:grid-cols-4 gap-4" id="homeLiveStats">
+        <div class="stat-card stat-card-dark">
+            <i class="fas fa-weight-hanging stat-icon"></i>
+            <p class="stat-value" id="homeStatOccupied">—</p>
+            <p class="stat-label">Зерна на элеваторе</p>
+            <p class="stat-hint">Суммарная масса партий, т</p>
+        </div>
+        <div class="stat-card stat-card-dark">
+            <i class="fas fa-droplet stat-icon"></i>
+            <p class="stat-value" id="homeStatMoisture">—</p>
+            <p class="stat-label">Средняя влажность</p>
+            <p class="stat-hint">По всем учтённым партиям</p>
+        </div>
+        <div class="stat-card stat-card-dark">
+            <i class="fas fa-fire stat-icon"></i>
+            <p class="stat-value" id="homeStatDrying">—</p>
+            <p class="stat-label">Очередь на сушку</p>
+            <p class="stat-hint">Партий ждут сушки</p>
+        </div>
+        <div class="stat-card stat-card-dark">
+            <i class="fas fa-clipboard-check stat-icon"></i>
+            <p class="stat-value" id="homeStatReceived">—</p>
+            <p class="stat-label">Принято сегодня</p>
+            <p class="stat-hint">Масса за текущие сутки, т</p>
+        </div>
+    </div>
+</section>

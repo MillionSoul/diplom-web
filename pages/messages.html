@@ -1,0 +1,55 @@
+<div class="page-header">
+    <h1><i class="fas fa-comments"></i> Сообщения</h1>
+    <p id="chatScopeHint">Переписка с коллегами и служба поддержки</p>
+</div>
+<div class="container mx-auto px-4 pb-20">
+    <div id="chatModeTabs" class="chat-mode-tabs staff-only hidden">
+        <button type="button" id="chatTabDirect" class="chat-mode-tab chat-mode-tab-active" onclick="setChatScope('direct')">
+            <i class="fas fa-comments"></i> Диалоги
+        </button>
+        <button type="button" id="chatTabSupport" class="chat-mode-tab" onclick="setChatScope('support')">
+            <i class="fas fa-headset"></i> Техподдержка <span id="supportTabUnread" class="nav-badge hidden">0</span>
+        </button>
+    </div>
+    <div class="chat-layout">
+        <aside class="chat-sidebar card-panel">
+            <div id="chatSidebarActions" class="chat-sidebar-actions">
+                <div id="clientSupportBtn">
+                    <button type="button" onclick="openSupportChat()" class="btn-primary w-full text-sm">
+                        <i class="fas fa-headset mr-2"></i>Написать в поддержку
+                    </button>
+                </div>
+                <div id="newChatBlock">
+                    <button type="button" onclick="toggleNewChatPanel()" class="btn-ghost w-full text-sm mt-2">
+                        <i class="fas fa-user-plus mr-2"></i>Написать пользователю
+                    </button>
+                </div>
+            </div>
+            <div id="chatSearchMount" class="chat-search-mount"></div>
+            <div id="newChatPanel" class="new-chat-panel hidden">
+                <label class="text-xs font-semibold text-gray-500">Собеседник</label>
+                <select id="newChatUser" class="input-field mt-1 mb-2"></select>
+                <button type="button" onclick="startDirectChat()" class="btn-primary w-full text-sm">Начать</button>
+            </div>
+            <div id="threadsList" class="threads-list"></div>
+        </aside>
+        <section class="chat-main card-panel">
+            <div id="chatEmpty" class="chat-empty">
+                <i class="fas fa-comments text-4xl text-gray-300 mb-3"></i>
+                <p>Выберите диалог слева</p>
+            </div>
+            <div id="chatActive" class="chat-active hidden">
+                <div class="chat-header">
+                    <div id="chatHeaderInner" class="chat-header-inner">
+                        <h2 id="chatTitle">—</h2>
+                    </div>
+                </div>
+                <div id="messagesArea" class="messages-area"></div>
+                <form id="sendMessageForm" class="chat-compose" onsubmit="sendChatMessage(event)">
+                    <input type="text" id="messageInput" class="input-field" placeholder="Введите сообщение..." required maxlength="2000" autocomplete="off">
+                    <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
